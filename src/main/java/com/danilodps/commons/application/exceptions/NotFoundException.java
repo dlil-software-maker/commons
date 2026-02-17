@@ -1,4 +1,4 @@
-package com.danilodps.application.exceptions;
+package com.danilodps.commons.application.exceptions;
 
 import java.io.Serial;
 import java.util.UUID;
