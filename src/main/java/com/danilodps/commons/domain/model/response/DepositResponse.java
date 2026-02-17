@@ -1,5 +1,4 @@
-package com.danilodps.domain.model.response;
-
+package com.danilodps.commons.domain.model.response;
 
 import lombok.Builder;
 

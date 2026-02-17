@@ -1,4 +1,4 @@
-package com.danilodps.application.config;
+package com.danilodps.commons.application.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
