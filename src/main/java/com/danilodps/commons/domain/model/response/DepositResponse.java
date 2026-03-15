@@ -6,5 +6,5 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Builder
-public record DepositResponse(String depositId, String username, String userEmail, BigDecimal amount, LocalDateTime depositTimestamp) {
+public record DepositResponse(String depositId, String username, String userEmail, BigDecimal amount, LocalDateTime depositTimestamp) implements MessageKafka {
 }
