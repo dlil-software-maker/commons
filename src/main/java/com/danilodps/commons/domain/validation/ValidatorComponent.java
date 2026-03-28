@@ -19,12 +19,17 @@ public class ValidatorComponent {
         emailValidator.validate(email);
     }
 
-    public void whichDocument(String documentIdentifier, String document){
-        if(documentIdentifier.equals(DocumentTypeEnum.CPF.getShortName())){
+    public void whichDocument(String documentIdentifier, String document) {
+        if (documentIdentifier == null) {
+            log.warn("Document identifier is null, defaulting to CNPJ validation");
+            cnpjValidator.validate(document);
+            return;
+        }
+
+        if (DocumentTypeEnum.CPF.getShortName().equals(documentIdentifier)) {
             log.info("Validando CPF");
             cpfValidator.validate(document);
-        }
-        else{
+        } else {
             log.info("Validando CNPJ");
             cnpjValidator.validate(document);
         }

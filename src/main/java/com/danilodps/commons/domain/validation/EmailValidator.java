@@ -22,12 +22,14 @@ public class EmailValidator {
             throw new EmailEmptyException();
         }
 
-        if (hasInvalidStructure(email)) {
+        String trimmedEmail = email.trim();
+
+        if (hasInvalidStructure(trimmedEmail)) {
             log.error(ERROR_EMAIL);
             throw new InvalidEmailException(email);
         }
 
-        if (!matchesPattern(email)) {
+        if (!matchesPattern(trimmedEmail)) {
             log.error(ERROR_EMAIL);
             throw new InvalidEmailException(email);
         }
