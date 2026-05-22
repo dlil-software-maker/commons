@@ -1,0 +1,60 @@
+name: CI - Commons Library
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read        # permissão para ler o código do repositório
+      packages: write       # permissão para publicar no GitHub Packages
+
+    steps:
+
+      - name: Fazer checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar o Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      - name: Cache das dependências Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Compilar o projeto
+        run: mvn compile -B
+
+      - name: Rodar os testes
+        run: mvn test -B
+
+      - name: Publicar no GitHub Packages
+        run: mvn deploy -B -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN é o token automático do GitHub
+          # com o bloco permissions acima ele agora tem permissão de escrita
+          # no GitHub Packages deste repositório
+
+      - name: Publicar o JAR como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: commons-jar
+          path: target/*.jar
+          retention-days: 7
