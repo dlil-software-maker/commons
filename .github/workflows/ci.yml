@@ -1,0 +1,51 @@
+# Valida o código a cada PR ou push — nunca publica
+name: CI - Commons Library
+
+on:
+  push:
+    branches: [main, develop]   # roda quando alguém faz push nessas branches
+  pull_request:
+    branches: [main]            # roda quando abre PR ou faz novo commit dentro do PR
+  workflow_dispatch:            # permite disparo manual pela UI do GitHub
+
+jobs:
+
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ── Passo 1 ──────────────────────────────────────────
+      - name: Fazer checkout do código
+        uses: actions/checkout@v4
+        # baixa o código do repositório dentro da VM
+
+      # ── Passo 2 ──────────────────────────────────────────
+      - name: Configurar o Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+        # instala o JDK e configura o JAVA_HOME automaticamente
+        # aqui não precisa de server-id pois este workflow não publica nada
+
+      # ── Passo 3 ──────────────────────────────────────────
+      - name: Cache das dependências Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # ── Passo 4 ──────────────────────────────────────────
+      - name: Compilar o projeto
+        run: mvn compile -B
+        # compila os arquivos .java e gera os .class
+        # -B (batch mode) — logs mais limpos, ideal para CI
+
+      # ── Passo 5 ──────────────────────────────────────────
+      - name: Rodar os testes
+        run: mvn test -B
+        # executa todos os testes da pasta src/test/
+        # se qualquer teste falhar, o job para e marca como falha

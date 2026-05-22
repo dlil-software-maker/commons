@@ -1,0 +1,76 @@
+# Publica a biblioteca no GitHub Packages quando uma tag vX.X.X é criada
+name: Publish - Commons Library
+
+on:
+  push:
+    tags:
+      - 'v*'              # dispara apenas quando uma tag começando com "v" é criada
+      # exemplos: v1.0.0, v1.1.0, v2.0.0
+
+jobs:
+
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read      # permissão para ler o código do repositório
+      packages: write     # permissão para publicar no GitHub Packages
+
+    steps:
+
+      # ── Passo 1 ──────────────────────────────────────────
+      - name: Fazer checkout do código
+        uses: actions/checkout@v4
+
+      # ── Passo 2 ──────────────────────────────────────────
+      - name: Configurar o Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github           # bate com o <id> do distributionManagement no pom.xml
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+        # além de instalar o JDK, gera o settings.xml na VM com as credenciais
+        # necessárias para publicar no GitHub Packages
+
+      # ── Passo 3 ──────────────────────────────────────────
+      - name: Cache das dependências Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # ── Passo 4 ──────────────────────────────────────────
+      - name: Extrair versão da tag
+        id: version
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        # GITHUB_REF contém o caminho completo da tag: refs/tags/v1.0.0
+        # ${GITHUB_REF#refs/tags/v} remove o prefixo e deixa apenas: 1.0.0
+        # GITHUB_OUTPUT passa o valor VERSION para os próximos steps
+
+      # ── Passo 5 ──────────────────────────────────────────
+      - name: Atualizar versão no pom.xml
+        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false
+        # versions:set — plugin do Maven que atualiza a versão no pom.xml
+        # -DnewVersion — recebe a versão extraída da tag no passo anterior
+        # -DgenerateBackupPoms=false — não gera arquivo pom.xml.versionsBackup
+        # exemplo: se a tag foi v1.0.0, o pom.xml passa a ter <version>1.0.0</version>
+
+      # ── Passo 6 ──────────────────────────────────────────
+      - name: Compilar e testar
+        run: mvn verify -B
+        # verify — compila e roda todos os testes em um único comando
+        # garante que o código está funcionando antes de publicar
+
+      # ── Passo 7 ──────────────────────────────────────────
+      - name: Publicar no GitHub Packages
+        run: mvn deploy -B -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        # publica a biblioteca com a versão extraída da tag
+        # GITHUB_TOKEN é o token automático do GitHub
+        # com o bloco permissions acima ele tem permissão de escrita no GitHub Packages
