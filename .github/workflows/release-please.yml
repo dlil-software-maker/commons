@@ -17,7 +17,6 @@ jobs:
       - name: Executar Release Please
         uses: googleapis/release-please-action@v4
         with:
-          release-type: java
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          # token com permissões elevadas para criar PRs e tags
-          # o GITHUB_TOKEN padrão não tem permissão suficiente para esta operação
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
