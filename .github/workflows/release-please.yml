@@ -1,0 +1,23 @@
+# Analisa os commits e abre PRs de release automaticamente
+name: Release Please
+
+on:
+  push:
+    branches: [main]              # roda a cada push na main
+    # analisa os commits novos e decide se abre um PR de release
+
+jobs:
+
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write             # permissão para criar tags e commits
+      pull-requests: write        # permissão para abrir o PR de release automaticamente
+
+    steps:
+
+      - name: Executar Release Please
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: java      # informa que é um projeto Java
+          # o Release Please sabe que precisa atualizar o pom.xml
