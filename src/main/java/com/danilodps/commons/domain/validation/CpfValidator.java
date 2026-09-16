@@ -2,12 +2,13 @@ package com.danilodps.commons.domain.validation;
 
 import com.danilodps.commons.application.exceptions.InvalidCPFException;
 import com.danilodps.commons.application.exceptions.UserCPFEmptyException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 public class CpfValidator {
+    private static final Logger log = LoggerFactory.getLogger(CpfValidator.class);
 
     private static final int CPF_LENGTH = 11;
     private static final String NON_DIGIT_REGEX = "[^0-9]";

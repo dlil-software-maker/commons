@@ -1,18 +1,23 @@
 package com.danilodps.commons.domain.validation;
 
 import com.danilodps.commons.domain.model.enums.DocumentTypeEnum;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
-@RequiredArgsConstructor
 public class ValidatorComponent {
+    private static final Logger log = LoggerFactory.getLogger(ValidatorComponent.class);
 
     private final CpfValidator cpfValidator;
     private final CnpjValidator cnpjValidator;
     private final EmailValidator emailValidator;
+
+    public ValidatorComponent(CpfValidator cpfValidator, CnpjValidator cnpjValidator, EmailValidator emailValidator) {
+        this.cpfValidator = cpfValidator;
+        this.cnpjValidator = cnpjValidator;
+        this.emailValidator = emailValidator;
+    }
 
     public void validate(String email, String documentIdentifier, String document) {
         whichDocument(documentIdentifier, document);
@@ -34,4 +39,5 @@ public class ValidatorComponent {
             cnpjValidator.validate(document);
         }
     }
+
 }

@@ -2,14 +2,15 @@ package com.danilodps.commons.domain.validation;
 
 import com.danilodps.commons.application.exceptions.EmailEmptyException;
 import com.danilodps.commons.application.exceptions.InvalidEmailException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
-@Slf4j
 @Component
 public class EmailValidator {
+    private static final Logger log = LoggerFactory.getLogger(EmailValidator.class);
 
     private static final String ERROR_EMAIL = "Erro. Email inválido";
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";

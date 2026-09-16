@@ -4,47 +4,49 @@ import com.danilodps.commons.domain.model.response.DepositResponse;
 import com.danilodps.commons.domain.model.response.SignInResponse;
 import com.danilodps.commons.domain.model.response.SignUpResponse;
 import com.danilodps.commons.domain.model.response.TransactionResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Commons {
-    public static void main(String[] args) {
+    private static final Logger log = LoggerFactory.getLogger(Commons.class);
+    static void main(String[] args) {
+        log.info("[Commons Running...]");
 
-        SignInResponse signInResponse = SignInResponse.builder()
-                .id(UUID.randomUUID().toString())
-                .email("teste@email.com")
-                .username("teste-teste")
-                .signinTimestamp(LocalDateTime.now())
-                .build();
+        SignInResponse signInResponse = new SignInResponse(
+                UUID.randomUUID().toString(),
+                "teste-teste",
+                "teste@email.com",
+                LocalDateTime.now());
 
-        SignUpResponse signUpResponse = SignUpResponse.builder()
-                .id(UUID.randomUUID().toString())
-                .email("teste@email.com")
-                .username("teste-teste")
-                .signupTimestamp(LocalDateTime.now())
-                .build();
+        SignUpResponse signUpResponse = new SignUpResponse(
+                UUID.randomUUID().toString(),
+                "teste-teste",
+                "teste@email.com",
+                LocalDateTime.now());
 
-        DepositResponse depositResponse = DepositResponse.builder()
-                .depositId(UUID.randomUUID().toString())
-                .username("teste-teste")
-                .userEmail("teste@email.com")
-                .amount(new BigDecimal("1000000"))
-                .depositTimestamp(LocalDateTime.now())
-                .build();
+        DepositResponse depositResponse = new DepositResponse(
+                UUID.randomUUID().toString(),
+                "teste-teste",
+                "teste@email.com",
+               new BigDecimal("1000000"),
+               LocalDateTime.now());
 
-        TransactionResponse transactionResponse = TransactionResponse.builder()
-                .transactionId(UUID.randomUUID().toString())
-                .senderEmail("teste_sender@email.com")
-                .receiverEmail("teste_receiver@email.com")
-                .amount(new BigDecimal("1000000"))
-                .transactionTimestamp(LocalDateTime.now())
-                .build();
+        TransactionResponse transactionResponse = new TransactionResponse(
+                UUID.randomUUID().toString(),
+                new BigDecimal("1000000"),
+                LocalDateTime.now(),
+                "teste_sender@email.com",
+                "teste_receiver@email.com");
 
-        System.out.println(signInResponse);
-        System.out.println(signUpResponse);
-        System.out.println(depositResponse);
-        System.out.println(transactionResponse);
+
+        log.info("[signInResponse] {}", signInResponse);
+        log.info("[signUpResponse] {}", signUpResponse);
+        log.info("[depositResponse] {}", depositResponse);
+        log.info("[transactionResponse] {}", transactionResponse);
     }
+
 }

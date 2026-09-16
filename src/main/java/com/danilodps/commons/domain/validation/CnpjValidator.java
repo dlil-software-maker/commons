@@ -2,12 +2,13 @@ package com.danilodps.commons.domain.validation;
 
 import com.danilodps.commons.application.exceptions.InvalidCNPJException;
 import com.danilodps.commons.application.exceptions.StoreCNPJEmptyException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 public class CnpjValidator {
+    private static final Logger log = LoggerFactory.getLogger(CnpjValidator.class);
 
     private static final int CNPJ_LENGTH = 14;
     private static final String NON_DIGIT_REGEX = "[^0-9]";
@@ -15,24 +16,24 @@ public class CnpjValidator {
 
     public void validate(String cnpj) {
         if (isNullOrEmpty(cnpj)) {
-            log.warn(ERROR_CNPJ);
+            log.error(ERROR_CNPJ);
             throw new StoreCNPJEmptyException();
         }
 
         String cleanedCNPJ = cleanCNPJ(cnpj);
 
         if (!hasValidLength(cleanedCNPJ)) {
-            log.warn(ERROR_CNPJ);
+            log.error(ERROR_CNPJ);
             throw new InvalidCNPJException(cnpj);
         }
 
         if (areAllDigitsIdentical(cleanedCNPJ)) {
-            log.warn(ERROR_CNPJ);
+            log.error(ERROR_CNPJ);
             throw new InvalidCNPJException(cnpj);
         }
 
         if (!hasValidDigits(cleanedCNPJ)) {
-            log.warn(ERROR_CNPJ);
+            log.error(ERROR_CNPJ);
             throw new InvalidCNPJException(cnpj);
         }
     }
@@ -107,6 +108,7 @@ public class CnpjValidator {
         int remainder = sum % 11;
         return remainder < 2 ? 0 : 11 - remainder;
     }
+
 }
 
 
