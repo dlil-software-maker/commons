@@ -17,14 +17,14 @@ jobs:
 
       # ── Passo 1 ──────────────────────────────────────────
       - name: Fazer checkout do código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         # baixa o código do repositório dentro da VM
 
       # ── Passo 2 ──────────────────────────────────────────
       - name: Configurar o Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
         # instala o JDK e configura o JAVA_HOME automaticamente
         # aqui não precisa de server-id pois este workflow não publica nada
